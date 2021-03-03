@@ -1,0 +1,2 @@
+# This powershell command show all vm ip address on Hyper-v
+Get-VMNetworkAdapter -VMName * |Sort-Object IPAddresses
