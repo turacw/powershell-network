@@ -1,0 +1,28 @@
+#This powershell pull the vm network ip and write to hosts file under etc on windows
+#Requires -RunAsAdministrator
+Set-StrictMode -Version 3.0
+$ErrorActionPreference = "Stop"
+
+$hostsFile = "${env:SystemRoot}\System32\drivers\etc\hosts"
+
+$datestring = (Get-Date -Format "o") -Replace '[:\-]','-'
+$backupHostsFile = "$hostsFile.${datestring}.bak"
+
+echo "Backing up hosts file to $backupHostsFile"
+cp $hostsFile $backupHostsFile
+
+$content = ''
+
+foreach ($vm in (get-vm | Get-VMNetworkAdapter)) {
+    $vmname = $vm.VMName.ToLower() -replace '[. ]',''
+    $hostName = "${vmname}.local"
+    if ($vm.IPAddresses -ne $null) {
+        echo "Writing hosts entry for $vm"
+        $address = $vm.IPAddresses[0]
+        $content += "$address $hostName `n"
+    } else {
+        echo "Ignoring $vm"
+    }
+}
+
+Set-Content -Path "$hostsFile" -Value $content
