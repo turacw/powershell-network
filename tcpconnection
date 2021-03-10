@@ -1,0 +1,12 @@
+# With this powershell command you can find and track active network session on powershell
+
+Get-NetTCPConnection -RemoteAddress 172.16.*
+
+# If you want to see active session you can filter via -state for example -state listen
+
+Get-NetTCPConnection -RemoteAddress 172.16.* -State listen
+
+# If you want stop this connection you must track process and kill the process which is same id
+
+Get-Process
+Stop-Process id 456
